@@ -1,13 +1,11 @@
-import { describe, test, it, expect  } from "vitest";
-import { expect } from "chai";
-import { Item, Shop } from "../src/gilded_rose.mjs";
-import { GildedRose } from '../src/GildedRose.js';
+import { describe, it, expect } from "vitest";
+import { GildedRose as Shop } from '../src/GildedRose.js';
 import { NormalItem } from '../src/items/NormalItem.js';
 import { AgedBrie } from '../src/items/AgedBrie.js';
 import { Sulfuras } from '../src/items/Sulfuras.js';
 import { BackstagePass } from '../src/items/BackstagePass.js';
 import { Conjured } from '../src/items/Conjured.js';
-import { describe, it, expect } from 'vitest';
+
 /* Well this is where it gets interesting:
 
 	- Once the sell by date has passed, Quality degrades twice as fast

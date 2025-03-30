@@ -2,11 +2,8 @@ import { Item } from './Item.mjs';
 
 export class BackstagePass  extends Item {
     constructor(name, sellIn, quality) {
-        this.name = name;
-        this.sellIn = sellIn;
-        this.quality = quality;
+        super(name, sellIn, quality);
     }
-
     updateQuality() {
         this.sellIn -= 1;
 
