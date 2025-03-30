@@ -56,5 +56,21 @@ describe("Gilded Rose", () => {
     shop.updateQuality();
     expect(shop.items[0].quality).to.equal(23);
   });
+  test("Backstage passes quality drops to 0 after concert", () => {
+    const shop = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 0, 20)]);
+    shop.updateQuality();
+    expect(shop.items[0].quality).to.equal(0);
+  });
+  test("Expired item decreases quality twice as fast", () => {
+    const shop = new Shop([new Item("Normal Item", -1, 20)]);
+    shop.updateQuality();
+    expect(shop.items[0].quality).to.equal(18);
+  });
+  test("Expired Aged Brie increases quality by 2", () => {
+    const shop = new Shop([new Item("Aged Brie", -1, 10)]);
+    shop.updateQuality();
+    expect(shop.items[0].quality).to.equal(12);
+  });
+
 
 });
