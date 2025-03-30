@@ -65,12 +65,12 @@ export class Shop {
     // Legendary item, does not change.
   }
 
-  updateConjured(item) {
+  updateConjured(item) { // New handler for Conjured items
     item.sellIn -= 1;
-    this.decreaseQuality(item, 2);
+    this.decreaseQuality(item, 2); // Degrade twice as fast
 
     if (item.sellIn < 0) {
-      this.decreaseQuality(item, 2);
+      this.decreaseQuality(item, 2); // Again, degrade twice as fast when sellIn is negative
     }
   }
 
