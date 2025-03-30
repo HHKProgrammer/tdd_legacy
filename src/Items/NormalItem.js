@@ -1,6 +1,6 @@
 import { Item } from './Item.mjs';
 
-export class NormalItem {
+export class NormalItem  extends Item {
     constructor(name, sellIn, quality) {
         this.name = name;
         this.sellIn = sellIn;

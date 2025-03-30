@@ -1,10 +1,11 @@
 import { Item } from './Item.mjs';
 
-export class AgedBrie {
-    constructor(name, sellIn, quality) {
-        this.name = name;
-        this.sellIn = sellIn;
-        this.quality = quality;
+export class AgedBrie extends Item {
+    updateQuality() {
+        if (this.quality < 50) {
+            this.quality += 1;
+        }
+        this.sellIn -= 1;
     }
 
     updateQuality() {
