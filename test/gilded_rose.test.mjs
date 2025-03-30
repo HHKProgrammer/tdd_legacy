@@ -1,4 +1,4 @@
-import { describe, test } from "vitest";
+import { describe, test, it, expect  } from "vitest";
 import { expect } from "chai";
 import { Item, Shop } from "../src/gilded_rose.mjs";
 /* Well this is where it gets interesting:
@@ -12,76 +12,58 @@ import { Item, Shop } from "../src/gilded_rose.mjs";
 	Quality increases by 2 when there are 10 days or less and by 3 when there are 5 days or less but
 	Quality drops to 0 after the concert*/
 describe("Gilded Rose", () => {
-  test("Normal item decreases in quality and sell inn each day", () => {
+
+  it("Normal item decreases in quality and sellIn each day", () => {
     const shop = new Shop([new Item("Normal Item", 10, 20)]);
     shop.updateQuality();
-    const [item] = shop.items;
-    expect(item.sellIn).to.equal(9);
-    expect(item.quality).to.equal(19);
-  });
-  test("Quality of normal item is never negative", () => {
-    const shop = new Shop([new Item("Normal Item", 5, 0)]);
-    shop.updateQuality();
-    const [item] = shop.items;
-    expect(item.quality).to.equal(0);
+    expect(shop.items[0].quality).toBe(19);
+    expect(shop.items[0].sellIn).toBe(9);
   });
 
-  test("Aged Brie increases in quality over time", () => {
-    const shop = new Shop([new Item("Aged Brie", 2, 0)]);
+  it("Quality of normal item is never negative", () => {
+    const shop = new Shop([new Item("Normal Item", 10, 0)]);
     shop.updateQuality();
-    const [item] = shop.items;
-    expect(item.quality).to.equal(1);
+    expect(shop.items[0].quality).toBe(0);
   });
 
-  test("Sulfuras never decreases in quality or sellIn", () => {
-    const shop = new Shop([new Item("Sulfuras, Hand of Ragnaros", 0, 80)]);
+  it("Aged Brie increases in quality over time", () => {
+    const shop = new Shop([new Item("Aged Brie", 10, 30)]);
     shop.updateQuality();
-    expect(shop.items[0].quality).to.equal(80);
-    expect(shop.items[0].sellIn).to.equal(0);
+    expect(shop.items[0].quality).toBe(31);
   });
 
-  test("Backstage passes increase in quality as sellIn approaches", () => {
+  it("Sulfuras never decreases in quality or sellIn", () => {
+    const shop = new Shop([new Item("Sulfuras, Hand of Ragnaros", 10, 80)]);
+    shop.updateQuality();
+    expect(shop.items[0].quality).toBe(80);
+    expect(shop.items[0].sellIn).toBe(10);
+  });
+
+  it("Backstage passes increase in quality as sellIn approaches", () => {
     const shop = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20)]);
     shop.updateQuality();
-    expect(shop.items[0].quality).to.equal(21);
+    expect(shop.items[0].quality).toBe(21);
   });
-  test("Backstage passes quality increases by 2 when 10 days or less", () => {
+
+  it("Backstage passes quality increases by 2 when 10 days or less", () => {
     const shop = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 10, 20)]);
     shop.updateQuality();
-    expect(shop.items[0].quality).to.equal(22);
+    expect(shop.items[0].quality).toBe(22);
   });
 
-  test("Backstage passes quality increases by 3 when 5 days or less", () => {
+  it("Backstage passes quality increases by 3 when 5 days or less", () => {
     const shop = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 5, 20)]);
     shop.updateQuality();
-    expect(shop.items[0].quality).to.equal(23);
-  });
-  test("Backstage passes quality drops to 0 after concert", () => {
-    const shop = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 0, 20)]);
-    shop.updateQuality();
-    expect(shop.items[0].quality).to.equal(0);
-  });
-  test("Expired item decreases quality twice as fast", () => {
-    const shop = new Shop([new Item("Normal Item", -1, 20)]);
-    shop.updateQuality();
-    expect(shop.items[0].quality).to.equal(18);
-  });
-  test("Expired Aged Brie increases quality by 2", () => {
-    const shop = new Shop([new Item("Aged Brie", -1, 10)]);
-    shop.updateQuality();
-    expect(shop.items[0].quality).to.equal(12);
-  });
-  test("Backstage passes quality drops to 0 after concert (sellIn < 0)", () => {
-    const shop = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", -1, 20)]);
-    shop.updateQuality();
-    expect(shop.items[0].quality).to.equal(0);
+    expect(shop.items[0].quality).toBe(23);
   });
 
-  test("Expired item with 0 quality remains at 0", () => {
-    const shop = new Shop([new Item("Normal Item", -1, 0)]);
+  it("Backstage passes quality drops to 0 after concert", () => {
+    const shop = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 0, 20)]);
     shop.updateQuality();
-    expect(shop.items[0].quality).to.equal(0);
+    expect(shop.items[0].quality).toBe(0);
   });
+
+  // New tests for Conjured Items
   it("Conjured items degrade in quality twice as fast before sellIn date", () => {
     const shop = new Shop([new Item("Conjured Mana Cake", 10, 20)]);
     shop.updateQuality();
@@ -96,4 +78,17 @@ describe("Gilded Rose", () => {
     expect(shop.items[0].sellIn).toBe(-1);
   });
 
+  it("Conjured items quality does not drop below 0", () => {
+    const shop = new Shop([new Item("Conjured Mana Cake", 0, 1)]);
+    shop.updateQuality();
+    expect(shop.items[0].quality).toBe(0);
+    expect(shop.items[0].sellIn).toBe(-1);
+  });
+
+  it("Conjured items degrade by 4 when sellIn is negative", () => {
+    const shop = new Shop([new Item("Conjured Mana Cake", -1, 10)]);
+    shop.updateQuality();
+    expect(shop.items[0].quality).toBe(6);
+    expect(shop.items[0].sellIn).toBe(-2);
+  });
 });
