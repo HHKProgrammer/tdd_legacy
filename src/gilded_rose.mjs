@@ -1,11 +1,21 @@
-export class Item {
-  constructor(name, sellIn, quality) {
-    this.name = name;
-    this.sellIn = sellIn;
-    this.quality = quality;
+import { NormalItem } from './items/NormalItem.js';
+import { AgedBrie } from './items/AgedBrie.js';
+import { Sulfuras } from './items/Sulfuras.js';
+import { BackstagePass } from './items/BackstagePass.js';
+import { Conjured } from './items/Conjured.js';
+
+export class GildedRose {
+  constructor(items = []) {
+    this.items = items;
+  }
+
+  updateQuality() {
+    this.items.forEach(item => item.updateQuality());
+    return this.items;
   }
 }
 
+/*
 export class Shop {
   constructor(items = []) {
     this.items = items;
@@ -60,4 +70,6 @@ export class Shop {
     return this.items;
   }
 }
+
+ */
 
