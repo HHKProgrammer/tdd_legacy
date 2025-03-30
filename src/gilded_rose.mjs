@@ -1,4 +1,3 @@
-
 export class Item {
   constructor(name, sellIn, quality) {
     this.name = name;
@@ -13,72 +12,52 @@ export class Shop {
   }
 
   updateQuality() {
-    const updateHandlers = {
-      "Aged Brie": this.updateAgedBrie,
-      "Backstage passes to a TAFKAL80ETC concert": this.updateBackstagePass,
-      "Sulfuras, Hand of Ragnaros": this.updateSulfuras,
-      "Conjured": this.updateConjured,
-      "default": this.updateNormalItem,
-    };
+    for (let i = 0; i < this.items.length; i++) {
+      const item = this.items[i];
+      const isConjured = item.name.toLowerCase().includes("conjured");
+      const degradationRate = isConjured ? 2 : 1;
 
-    for (let item of this.items) {
-      const handler = updateHandlers[item.name] || updateHandlers["default"];
-      handler.call(this, item);
+      if (item.name !== "Aged Brie" && item.name !== "Backstage passes to a TAFKAL80ETC concert") {
+        if (item.quality > 0) {
+          if (item.name !== "Sulfuras, Hand of Ragnaros") {
+            item.quality -= degradationRate;
+          }
+        }
+      } else {
+        if (item.quality < 50) {
+          item.quality += 1;
+          if (item.name === "Backstage passes to a TAFKAL80ETC concert") {
+            if (item.sellIn < 11) item.quality += 1;
+            if (item.sellIn < 6) item.quality += 1;
+          }
+        }
+      }
+
+      if (item.name !== "Sulfuras, Hand of Ragnaros") item.sellIn -= 1;
+
+      if (item.sellIn < 0) {
+        if (item.name !== "Aged Brie") {
+          if (item.name !== "Backstage passes to a TAFKAL80ETC concert") {
+            if (item.quality > 0) {
+              if (item.name !== "Sulfuras, Hand of Ragnaros") {
+                item.quality -= degradationRate;
+              }
+            }
+          } else {
+            item.quality = 0;
+          }
+        } else if (item.quality < 50) {
+          item.quality += 1;
+        }
+      }
+
+      if (item.name !== "Sulfuras, Hand of Ragnaros") {
+        if (item.quality < 0) item.quality = 0;
+        if (item.quality > 50) item.quality = 50;
+      }
     }
 
     return this.items;
   }
-
-  updateNormalItem(item) {
-    item.sellIn -= 1;
-    this.decreaseQuality(item);
-
-    if (item.sellIn < 0) {
-      this.decreaseQuality(item);
-    }
-  }
-
-  updateAgedBrie(item) {
-    item.sellIn -= 1;
-    this.increaseQuality(item);
-
-    if (item.sellIn < 0) {
-      this.increaseQuality(item);
-    }
-  }
-
-  updateBackstagePass(item) {
-    item.sellIn -= 1;
-
-    if (item.sellIn < 0) {
-      item.quality = 0;
-      return;
-    }
-
-    this.increaseQuality(item);
-
-    if (item.sellIn < 10) this.increaseQuality(item);
-    if (item.sellIn < 5) this.increaseQuality(item);
-  }
-
-  updateSulfuras(item) {
-    // Legendary item, does not change.
-  }
-
-  updateConjured(item) { // New handler for Conjured items
-    item.sellIn -= 1;
-    this.decreaseQuality(item, 2); // Degrade twice as fast
-
-    if (item.sellIn < 0) {
-      this.decreaseQuality(item, 2); // Again, degrade twice as fast when sellIn is negative
-    }
-  }
-
-  increaseQuality(item) {
-    if (item.quality < 50) item.quality += 1;
-  }
-
-  decreaseQuality(item, amount = 1) {
-    item.quality = Math.max(0, item.quality - amount);
-  }
 }
+
