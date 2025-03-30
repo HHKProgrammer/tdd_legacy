@@ -1,3 +1,4 @@
+
 export class Item {
   constructor(name, sellIn, quality) {
     this.name = name;
@@ -12,52 +13,72 @@ export class Shop {
   }
 
   updateQuality() {
-    for (var i = 0; i < this.items.length; i++) {
-      if (this.items[i].name != "Aged Brie" && this.items[i].name != "Backstage passes to a TAFKAL80ETC concert") {
-        if (this.items[i].quality > 0) {
-          if (this.items[i].name != "Sulfuras, Hand of Ragnaros") {
-            this.items[i].quality = this.items[i].quality - 1;
-          }
-        }
-      } else {
-        if (this.items[i].quality < 50) {
-          this.items[i].quality = this.items[i].quality + 1;
-          if (this.items[i].name == "Backstage passes to a TAFKAL80ETC concert") {
-            if (this.items[i].sellIn < 11) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1;
-              }
-            }
-            if (this.items[i].sellIn < 6) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1;
-              }
-            }
-          }
-        }
-      }
-      if (this.items[i].name != "Sulfuras, Hand of Ragnaros") {
-        this.items[i].sellIn = this.items[i].sellIn - 1;
-      }
-      if (this.items[i].sellIn < 0) {
-        if (this.items[i].name != "Aged Brie") {
-          if (this.items[i].name != "Backstage passes to a TAFKAL80ETC concert") {
-            if (this.items[i].quality > 0) {
-              if (this.items[i].name != "Sulfuras, Hand of Ragnaros") {
-                this.items[i].quality = this.items[i].quality - 1;
-              }
-            }
-          } else {
-            this.items[i].quality = this.items[i].quality - this.items[i].quality;
-          }
-        } else {
-          if (this.items[i].quality < 50) {
-            this.items[i].quality = this.items[i].quality + 1;
-          }
-        }
-      }
+    const updateHandlers = {
+      "Aged Brie": this.updateAgedBrie,
+      "Backstage passes to a TAFKAL80ETC concert": this.updateBackstagePass,
+      "Sulfuras, Hand of Ragnaros": this.updateSulfuras,
+      "Conjured": this.updateConjured,
+      "default": this.updateNormalItem,
+    };
+
+    for (let item of this.items) {
+      const handler = updateHandlers[item.name] || updateHandlers["default"];
+      handler.call(this, item);
     }
 
     return this.items;
+  }
+
+  updateNormalItem(item) {
+    item.sellIn -= 1;
+    this.decreaseQuality(item);
+
+    if (item.sellIn < 0) {
+      this.decreaseQuality(item);
+    }
+  }
+
+  updateAgedBrie(item) {
+    item.sellIn -= 1;
+    this.increaseQuality(item);
+
+    if (item.sellIn < 0) {
+      this.increaseQuality(item);
+    }
+  }
+
+  updateBackstagePass(item) {
+    item.sellIn -= 1;
+
+    if (item.sellIn < 0) {
+      item.quality = 0;
+      return;
+    }
+
+    this.increaseQuality(item);
+
+    if (item.sellIn < 10) this.increaseQuality(item);
+    if (item.sellIn < 5) this.increaseQuality(item);
+  }
+
+  updateSulfuras(item) {
+    // Legendary item, does not change.
+  }
+
+  updateConjured(item) {
+    item.sellIn -= 1;
+    this.decreaseQuality(item, 2);
+
+    if (item.sellIn < 0) {
+      this.decreaseQuality(item, 2);
+    }
+  }
+
+  increaseQuality(item) {
+    if (item.quality < 50) item.quality += 1;
+  }
+
+  decreaseQuality(item, amount = 1) {
+    item.quality = Math.max(0, item.quality - amount);
   }
 }
