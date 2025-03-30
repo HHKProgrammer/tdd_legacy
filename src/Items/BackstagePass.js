@@ -1,4 +1,4 @@
-import { Item } from '../Item.js';
+import { Item } from './Item.mjs';
 
 export class BackstagePass {
     constructor(name, sellIn, quality) {
