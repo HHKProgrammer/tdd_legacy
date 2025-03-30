@@ -45,5 +45,16 @@ describe("Gilded Rose", () => {
     shop.updateQuality();
     expect(shop.items[0].quality).to.equal(21);
   });
+  test("Backstage passes quality increases by 2 when 10 days or less", () => {
+    const shop = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 10, 20)]);
+    shop.updateQuality();
+    expect(shop.items[0].quality).to.equal(22);
+  });
+
+  test("Backstage passes quality increases by 3 when 5 days or less", () => {
+    const shop = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 5, 20)]);
+    shop.updateQuality();
+    expect(shop.items[0].quality).to.equal(23);
+  });
 
 });
